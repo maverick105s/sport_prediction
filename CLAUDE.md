@@ -35,16 +35,31 @@ src/, public/   — артефакт случайного `npm create vite` в �
 
 ## Статус
 - [x] Модели, API, бот (start/newgame/join), фронт, scoring — локально работает
-- [ ] Деплой: Railway (backend+bot+db) + GitHub Pages (frontend)
+- [x] Деплой: Railway (backend+bot+db) + GitHub Pages (frontend)
 - [ ] Парсинг результатов матчей из внешних источников
 - [ ] Бот: команды для матчей/прогнозов (пока только через WebApp)
 
-## Следующий шаг
-Деплой на Railway + GitHub Pages.
+## Деплой
+Railway проект: brave-manifestation (Postgres + 2 сервиса из репо sport_prediction).
 
-Railway проект создан (название: brave-manifestation), PostgreSQL Online.
-API сервис не добавлен — Railway требует карту для деплоя GitHub репо.
-Завтра: привязать карту → Add → GitHub Repository → sport_prediction → настроить Start Command + Variables → миграции → GitHub Pages для фронта.
+- **API** (sport_prediction): Custom Start Command —
+  `sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"`
+  (миграции гоняются автоматически при каждом деплое)
+  Публичный домен: https://sportprediction-production-5a1c.up.railway.app
+- **Bot** (второй сервис из того же репо): Custom Start Command — `python -m app.bot.bot`
+- Оба сервиса: `DATABASE_URL = postgresql+asyncpg://${{Postgres.PGUSER}}:${{Postgres.PGPASSWORD}}@${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}`,
+  `WEBAPP_URL = https://maverick105s.github.io/sport_prediction/`
+- Деплой API/бота — автоматически при пуше в main (Railway GitHub-интеграция)
+
+Фронт: GitHub Pages, автодеплой через `.github/workflows/deploy-frontend.yml` при пуше в main (paths: frontend/**).
+- URL: https://maverick105s.github.io/sport_prediction/
+- `frontend/.env.production` → `VITE_API_URL` = адрес API на Railway
+
+Локальный `.venv` (gitignored) — на случай разовых alembic-команд через `railway run`.
+
+## Следующий шаг
+В `/start` бота захардкожен `game_id=1` (app/bot/bot.py) — в проде такой игры ещё нет.
+Проверить полный сценарий на проде: `/newgame` → `/join` → открыть WebApp с реальным game_id (сейчас всегда 1).
 
 ## Заметки
 - В корне есть лишний vite-каркас (src/, package.json, node_modules) — кандидат на удаление, реальный фронт в frontend/
