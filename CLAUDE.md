@@ -42,6 +42,10 @@ src/, public/   — артефакт случайного `npm create vite` в �
 ## Следующий шаг
 Деплой на Railway + GitHub Pages.
 
+Railway проект создан (название: brave-manifestation), PostgreSQL Online.
+API сервис не добавлен — Railway требует карту для деплоя GitHub репо.
+Завтра: привязать карту → Add → GitHub Repository → sport_prediction → настроить Start Command + Variables → миграции → GitHub Pages для фронта.
+
 ## Заметки
 - В корне есть лишний vite-каркас (src/, package.json, node_modules) — кандидат на удаление, реальный фронт в frontend/
 - Старая копия в ~/Downloads/sport_predictions — НЕ трогать, не актуальна
